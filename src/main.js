@@ -17,16 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    fileInputElement.addEventListener('change', handleFileLoad);
-    if (searchInputElement) {
-        // searchInputElement.addEventListener('input', handleSearch); // Original direct call
-        searchInputElement.addEventListener('input', (event) => {
-            const searchTerm = event.target.value;
-            // console.log("Input event - Search term:", searchTerm); // Optional: for immediate feedback if needed
-            debouncedExecuteSearch(searchTerm);
-        });
-    }
-
+    // 1. Define debounce utility
     function debounce(func, delay) {
         let timeoutId;
         return function(...args) {
@@ -37,8 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    const debouncedExecuteSearch = debounce(executeSearch, 1000); // 1000ms delay
-
+    // 2. Define functions to be debounced
     function executeSearch(searchTerm) {
         if (!currentMindMapData) {
             return;
@@ -57,7 +47,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function handleResize() {
+        if (currentMindMapData) {
+            // Re-render with current search state
+            const searchTerm = searchInputElement ? searchInputElement.value : "";
+            executeSearch(searchTerm); // Use executeSearch to re-apply filter and render
+        }
+    }
 
+    // 3. Create debounced versions
+    const debouncedExecuteSearch = debounce(executeSearch, 1000); // 1000ms delay
+    const debouncedHandleResize = debounce(handleResize, 250); // 250ms delay for resize
+
+    // 4. Setup event listeners
+    fileInputElement.addEventListener('change', handleFileLoad);
+    if (searchInputElement) {
+        searchInputElement.addEventListener('input', (event) => {
+            const searchTerm = event.target.value;
+            debouncedExecuteSearch(searchTerm);
+        });
+    }
+    window.addEventListener('resize', debouncedHandleResize);
+
+    // 5. Other function definitions
     function handleFileLoad(event) {
         const file = event.target.files[0];
         if (!file) {
