@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentMindMapData) {
                     console.log("Mind map parsed successfully:", currentMindMapData);
                     // Placeholder for Phase 2: renderGraph(currentMindMapData);
-                    alert("Mind map loaded and parsed. Check console for data. Visualization coming in Phase 2.");
                     renderGraph(currentMindMapData); // Call initial render
                 } else {
                     console.error("Failed to parse mind map XML.");
