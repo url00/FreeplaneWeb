@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch FreeplaneWeb (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8000/src/index.html",
+      "webRoot": "${workspaceFolder}",
+      "preLaunchTask": "Run esbuild dev server",
+      "sourceMaps": true,
+      "postDebugTask": "Terminate esbuild dev server" // Optional: attempts to terminate the task
+    }
+  ]
+}

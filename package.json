@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "esbuild src/main.js --bundle --outfile=dist/bundle.js --format=esm",
-    "dev": "esbuild src/main.js --bundle --outfile=dist/bundle.js --format=esm --servedir=src --watch"
+    "dev": "esbuild src/main.js --bundle --outfile=dist/bundle.js --format=esm --servedir=./ --watch"
   },
   "keywords": [
     "freeplane",

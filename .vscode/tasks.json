@@ -1,0 +1,30 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run esbuild dev server",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "esbuild",
+        "pattern": {
+          "regexp": "^ \\[watch\\] build finished, watching for changes...$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^\\[watch\\] build finished, watching for changes...$",
+          "endsPattern": "^$" // This might need adjustment if esbuild has a specific "stopped" message
+        }
+      },
+      "detail": "Runs 'npm run dev' to start the esbuild development server with watch mode."
+    },
+    {
+      "label": "Terminate esbuild dev server",
+      "type": "shell",
+      "command": "echo 'Attempting to terminate esbuild dev server... (VS Code will manage actual termination of the background task)'",
+      "problemMatcher": [],
+      "detail": "A placeholder task referenced by launch.json's postDebugTask. VS Code typically handles termination of associated background tasks."
+    }
+  ]
+}
