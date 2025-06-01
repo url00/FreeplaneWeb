@@ -149,8 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const g = svg.append("g");
 
+        const nodeWidth = 180; // Horizontal space for each node
+        const nodeHeight = 70;  // Vertical space for each node, to accommodate wrapped text
+        const textMaxWidth = 150; // Max width for text before wrapping
+        const lineHeight = "1.1em"; // Line height for wrapped text
+
         const root = d3.hierarchy(data);
-        const treeLayout = d3.tree().size([height - 40, width - 160]); // Adjusted for padding/margins
+        // Use nodeSize for fixed spacing, better for text wrapping
+        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);
         treeLayout(root);
 
         // Links
@@ -188,14 +194,84 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('x', d => d.children ? -13 : 13)
             .style('text-anchor', d => d.children ? 'end' : 'start')
             .text(d => d.data.name)
-            .style('font-size', '10px');
+            .style('font-size', '10px')
+            .call(wrapText, textMaxWidth, lineHeight); // Call text wrapping function
 
         // Initial transform to center the graph or fit it
-        // This is a simple centering, might need more sophisticated logic for large graphs
+        // Adjust translation based on new nodeWidth and potential graph spread
         const firstNode = root.descendants()[0];
         if(firstNode) {
-             const initialTransform = d3.zoomIdentity.translate(80, height / 2 - firstNode.x).scale(0.8);
+             // Translate to bring the first node near the left edge, vertically centered.
+             // The x-coordinate from d3.tree with nodeSize is relative to its parent in that dimension.
+             // The root node's x is typically 0 if nodeSize is used for vertical separation.
+             // We need to find the graph bounds to center it properly or fit it.
+             // For now, a simple initial translation:
+             let minX = 0, maxX = 0, minY = 0, maxY = 0;
+             root.each(d => {
+                if (d.x < minX) minX = d.x;
+                if (d.x > maxX) maxX = d.x;
+                if (d.y < minY) minY = d.y;
+                if (d.y > maxY) maxY = d.y;
+             });
+            
+             const graphHeight = maxX - minX + nodeHeight; // Approximate graph height
+             const graphWidth = maxY - minY + nodeWidth; // Approximate graph width
+
+             let initialScale = Math.min( (height - 40) / graphHeight, (width - 40) / graphWidth, 1); // Add padding
+             if (initialScale > 1) initialScale = 1; // Don't scale up beyond 1
+
+             // Center the graph
+             const translateX = (width - graphWidth * initialScale) / 2 - (minY * initialScale) + 20; // +20 for some left padding
+             const translateY = (height - graphHeight * initialScale) / 2 - (minX * initialScale) + 20; // +20 for some top padding
+            
+             const initialTransform = d3.zoomIdentity.translate(translateX, translateY).scale(initialScale);
              d3.select(graphContainerElement).select('svg').call(d3.zoom().transform, initialTransform);
         }
     }
+
+    /**
+     * Wraps SVG text to a given width.
+     * @param {d3.Selection} textSelection D3 selection of text elements.
+     * @param {number} maxWidth The maximum width for the text.
+     * @param {string|number} lineHeight The height of each line (e.g., "1.1em" or a pixel value).
+     */
+    function wrapText(textSelection, maxWidth, lineHeight) {
+        textSelection.each(function(d) { // 'd' is the data bound to the node
+            const text = d3.select(this);
+            const words = d.data.name.split(/\s+/).reverse(); // Process words in reverse for easy pop
+            let word;
+            let line = [];
+            let lineNumber = 0;
+            const x = text.attr("x"); // Original x position
+            const initialDy = parseFloat(text.attr("dy")) || 0; // Original dy (e.g., 0.35em)
+            
+            text.text(null); // Clear existing text
+
+            let tspan = text.append("tspan")
+                .attr("x", x)
+                .attr("dy", initialDy + "em"); // Use 'em' if initialDy was like '0.35em'
+
+            while (word = words.pop()) {
+                line.push(word);
+                tspan.text(line.join(" "));
+                // Check if tspan exceeds maxWidth. For robust checking, use getComputedTextLength().
+                // However, getComputedTextLength can be slow if called for many nodes.
+                // A simpler heuristic or fixed char count per line might be used if performance is an issue.
+                // For now, let's assume a more direct check if possible, or rely on visual adjustment.
+                // This is a common challenge in SVG text wrapping.
+                // A common approach is to test length, if too long, remove last word, finalize tspan, start new tspan with that word.
+                if (tspan.node().getComputedTextLength() > maxWidth && line.length > 1) {
+                    line.pop(); // Remove the word that made it too long
+                    tspan.text(line.join(" "));
+                    line = [word]; // Start new line with the popped word
+                    lineNumber++;
+                    tspan = text.append("tspan")
+                        .attr("x", x)
+                        .attr("dy", lineNumber === 0 && initialDy !== 0 ? initialDy + "em" : lineHeight) // Subsequent lines use lineHeight
+                        .text(word);
+                }
+            }
+        });
+    }
+
 });
