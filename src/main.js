@@ -19,8 +19,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fileInputElement.addEventListener('change', handleFileLoad);
     if (searchInputElement) {
-        searchInputElement.addEventListener('input', handleSearch);
+        // searchInputElement.addEventListener('input', handleSearch); // Original direct call
+        searchInputElement.addEventListener('input', (event) => {
+            const searchTerm = event.target.value;
+            // console.log("Input event - Search term:", searchTerm); // Optional: for immediate feedback if needed
+            debouncedExecuteSearch(searchTerm);
+        });
     }
+
+    function debounce(func, delay) {
+        let timeoutId;
+        return function(...args) {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                func.apply(this, args);
+            }, delay);
+        };
+    }
+
+    const debouncedExecuteSearch = debounce(executeSearch, 1000); // 1000ms delay
+
+    function executeSearch(searchTerm) {
+        if (!currentMindMapData) {
+            return;
+        }
+        console.log("Executing search for:", searchTerm); // Log when debounced function runs
+
+        if (searchTerm.trim() === "") {
+            renderGraph(currentMindMapData, ""); // Render full graph if search is empty
+        } else {
+            const filteredData = filterMindMapData(currentMindMapData, searchTerm.toLowerCase());
+            if (filteredData) {
+                renderGraph(filteredData, searchTerm.toLowerCase());
+            } else {
+                graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No matching nodes found.</p>';
+            }
+        }
+    }
+
 
     function handleFileLoad(event) {
         const file = event.target.files[0];
@@ -54,25 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
         reader.readAsText(file);
     }
 
-    function handleSearch(event) {
-        const searchTerm = event.target.value;
-        if (!currentMindMapData) {
-            return;
-        }
-        // Placeholder for Phase 3: filterAndRenderGraph(searchTerm);
-        console.log("Search term:", searchTerm);
-        
-        if (searchTerm.trim() === "") {
-            renderGraph(currentMindMapData, ""); // Render full graph if search is empty
-        } else {
-            const filteredData = filterMindMapData(currentMindMapData, searchTerm.toLowerCase());
-            if (filteredData) {
-                renderGraph(filteredData, searchTerm.toLowerCase());
-            } else {
-                graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No matching nodes found.</p>';
-            }
-        }
-    }
+    // The original handleSearch function is now replaced by the event listener calling debouncedExecuteSearch
+    // and the executeSearch function itself.
 
     /**
      * Recursively filters the mind map data based on a search term.
