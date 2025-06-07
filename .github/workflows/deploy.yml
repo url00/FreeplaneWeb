@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v4 # Updated to v4
+        with:
+          ref: main # Explicitly check out the main branch
 
       - name: Set up Node.js ⚙️
         uses: actions/setup-node@v4 # Updated to v4
@@ -44,6 +46,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./deploy_dist
+          force_orphan: true # Creates a fresh branch with no history
           # publish_branch: gh-pages # This is the default, so optional
           # user_name: 'github-actions[bot]' # Optional: customize commit user
           # user_email: 'github-actions[bot]@users.noreply.github.com' # Optional
