@@ -103,11 +103,12 @@ footer {
         flex-direction: row;
     }
     .controls {
-        width: 30%;
+        flex: 1 1 30%;
+        min-width: calc(100% / 3);
         margin-right: 1em;
         margin-bottom: 0;
     }
-    #graphContainer {
-        width: 70%;
+    .display-panel {
+        flex: 2 1 70%;
     }
 }
