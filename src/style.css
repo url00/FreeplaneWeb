@@ -16,27 +16,25 @@ body {
 main {
     flex-grow: 1;
     display: flex;
-    flex-direction: column; /* Default to column for mobile */
+    flex-direction: column;
     padding: 1em;
-    /* padding adjusted in media queries */
 }
 
 .search-container {
     background-color: #fff;
     padding: 1em;
     border-radius: 5px;
-    /* box-shadow removed */
     box-sizing: border-box;
     position: fixed;
     top: 1em;
-    left: 1em; /* Changed from right to left */
-    width: calc(100% - 2em); /* Full width minus padding on small screens */
-    max-width: 400px; /* Max width for desktop */
+    left: 1em;
+    width: calc(100% - 2em);
+    max-width: 400px;
     z-index: 1000;
 }
 
 .search-container input[type="text"] {
-    width: calc(100% - 22px); /* Account for padding and border */
+    width: calc(100% - 22px);
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -60,7 +58,7 @@ main {
 
 .controls input[type="file"],
 .controls input[type="number"] {
-    width: calc(100% - 22px); /* Account for padding and border */
+    width: calc(100% - 22px);
     padding: 10px;
     margin-bottom: 1em;
     border: 1px solid #ddd;
@@ -95,47 +93,45 @@ main {
     min-height: 400px;
     border: 1px solid #ccc;
     background-color: #fff;
-    overflow: auto; /* Use auto for list, d3 will manage graph */
+    overflow: auto;
     position: relative;
     padding: 10px;
     box-sizing: border-box;
 }
 
 #graphContainer {
-    overflow: hidden; /* d3 will handle overflow with zoom/pan */
-    padding: 0; /* Reset padding for d3 container */
+    overflow: hidden;
+    padding: 0;
 }
 
-/* Fixed layout for mobile */
 @media (max-width: 767px) {
     main {
-        padding-top: 5em; /* Adjust based on search-container height for mobile */
+        padding-top: 5em;
     }
     .controls {
         height: 33.33vh;
-        overflow-y: auto; /* Allow controls to scroll internally on mobile */
-        padding-top: 5em; /* Add padding to controls for floating search box on mobile */
-        flex-direction: column; /* Ensure controls stack vertically on mobile */
+        overflow-y: auto;
+        padding-top: 5em;
+        flex-direction: column;
     }
     .display-panel {
         height: 66.67vh;
     }
 }
 
-/* Basic responsive adjustments for desktop */
 @media (min-width: 768px) {
     main {
         flex-direction: row;
-        padding-top: 1em; /* Reset top padding for desktop */
-        padding-left: 1em; /* Reset left padding for desktop */
+        padding-top: 1em;
+        padding-left: 1em;
     }
     .controls {
         flex: 1 1 30%;
         min-width: calc(100% / 3);
         margin-right: 1em;
         margin-bottom: 0;
-        padding-top: 5em; /* Add padding to controls for floating search box on desktop */
-        flex-direction: column; /* Ensure controls stack vertically on desktop */
+        padding-top: 5em;
+        flex-direction: column;
     }
     .display-panel {
         flex: 2 1 70%;
