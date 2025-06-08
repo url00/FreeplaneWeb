@@ -5,7 +5,7 @@
   "main": "src/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "esbuild src/main.js --bundle --outfile=dist/bundle.js --format=esm",
+    "build": "node build.js",
     "dev": "esbuild src/main.js --bundle --outfile=dist/bundle.js --format=esm --servedir=./ --watch"
   },
   "keywords": [
