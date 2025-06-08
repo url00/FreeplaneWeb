@@ -20,6 +20,23 @@ main {
     padding: 1em;
 }
 
+.search-container {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 1em;
+    box-sizing: border-box;
+}
+
+.search-container input[type="text"] {
+    width: calc(100% - 22px); /* Account for padding and border */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 .controls {
     background-color: #fff;
     padding: 1em;
@@ -36,7 +53,6 @@ main {
 }
 
 .controls input[type="file"],
-.controls input[type="text"],
 .controls input[type="number"] {
     width: calc(100% - 22px); /* Account for padding and border */
     padding: 10px;

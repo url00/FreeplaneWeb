@@ -8,6 +8,9 @@
 </head>
 <body>
     <main>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search nodes...">
+        </div>
         <div class="controls">
             <label for="fileInput">Load Mind Map (XML):</label>
             <input type="file" id="fileInput" accept=".xml, .mm">
@@ -18,8 +21,6 @@
                 <input type="radio" id="displayList" name="displayMode" value="list">
                 <label for="displayList">List</label>
             </fieldset>
-            <label for="searchInput">Search Nodes:</label>
-            <input type="text" id="searchInput" placeholder="Enter search term...">
             <br>
             <label for="nodeLimitInput">Max Nodes:</label>
             <input type="number" id="nodeLimitInput" value="20" min="1">
