@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInputElement = document.getElementById('searchInput');
     const graphContainerElement = document.getElementById('graphContainer');
     const nodeLimitInputElement = document.getElementById('nodeLimitInput');
+    const maxDepthInputElement = document.getElementById('maxDepthInput');
 
     let currentMindMapData = null;
 
@@ -39,7 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (searchTerm.trim() === "") {
             renderGraph(currentMindMapData, ""); // Render full graph if search is empty
         } else {
-            const filteredData = filterMindMapData(currentMindMapData, searchTerm.toLowerCase());
+            const maxDepth = maxDepthInputElement ? parseInt(maxDepthInputElement.value, 10) : 2;
+            const filteredData = filterMindMapData(currentMindMapData, searchTerm.toLowerCase(), maxDepth);
             if (filteredData) {
                 renderGraph(filteredData, searchTerm.toLowerCase());
             } else {
@@ -70,6 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (nodeLimitInputElement) {
         nodeLimitInputElement.addEventListener('change', () => {
+            const searchTerm = searchInputElement ? searchInputElement.value : "";
+            executeSearch(searchTerm);
+        });
+    }
+    if (maxDepthInputElement) {
+        maxDepthInputElement.addEventListener('change', () => {
             const searchTerm = searchInputElement ? searchInputElement.value : "";
             executeSearch(searchTerm);
         });
@@ -117,51 +125,53 @@ document.addEventListener('DOMContentLoaded', () => {
      * A node is included if it or any of its descendants match the search term.
      * @param {object} node The current node to process.
      * @param {string} searchTerm The lowercase search term.
+     * @param {number} maxDepth The maximum depth of children to include for a matching node.
      * @returns {object|null} A new node object if it or its descendants match, otherwise null.
      */
-    function filterMindMapData(node, searchTerm) {
+    function filterMindMapData(node, searchTerm, maxDepth) {
         if (!node) {
             return null;
         }
 
-        const nodeMatches = node.name && node.name.toLowerCase().includes(searchTerm);
-        let filteredChildren = [];
-        let descendantMatches = false;
-
-        if (node.children && node.children.length > 0) {
-            node.children.forEach(child => {
-                const filteredChild = filterMindMapData(child, searchTerm);
-                if (filteredChild) {
-                    filteredChildren.push(filteredChild);
-                    descendantMatches = true;
-                }
-            });
-        }
-
-        if (nodeMatches || descendantMatches) {
-            // Create a new node object to avoid mutating the original data
-            const newNode = { ...node }; // Shallow copy attributes and name/id
-            if (descendantMatches) {
-                newNode.children = filteredChildren;
-            } else {
-                // If the node itself matches but has no matching children, it's a leaf in the filtered tree (or has non-matching children that are now pruned)
-                // If it originally had children, we might want to show them all if the parent matches, or only matching branches.
-                // For "trim the displayed graph to only include branches with node content that matches", we only include children if they lead to a match.
-                // So, if descendantMatches is false, but nodeMatches is true, it means this node is a match, but none of its children start a matching branch.
-                // We still want to show this node. If it had children, they are now effectively pruned unless they themselves matched.
-                // If it had children and we want to show them all because parent matched:
-                // newNode.children = node.children ? node.children.map(c => ({...c})) : []; // Deep copy children if parent matches
-                // For now, stick to only including children if they are part of a matching branch.
-                newNode.children = filteredChildren.length > 0 ? filteredChildren : undefined; // Keep undefined if no children to match d3.hierarchy preference
+        // Helper function to clone a node and its descendants down to a certain depth
+        function cloneWithDepth(targetNode, depth) {
+            if (!targetNode || depth < 0) {
+                return null;
             }
-             // Ensure 'children' is undefined if empty, for d3.hierarchy
-            if (newNode.children && newNode.children.length === 0) {
-                delete newNode.children;
+            const newNode = { ...targetNode, children: undefined }; // Clone basic properties
+            if (targetNode.children && depth > 0) {
+                newNode.children = targetNode.children
+                    .map(child => cloneWithDepth(child, depth - 1))
+                    .filter(c => c !== null);
+                if (newNode.children.length === 0) {
+                    delete newNode.children;
+                }
             }
             return newNode;
         }
 
-        return null;
+        const nodeMatches = node.name && node.name.toLowerCase().includes(searchTerm);
+
+        if (nodeMatches) {
+            // If the node itself matches, clone it and its children down to maxDepth
+            return cloneWithDepth(node, maxDepth);
+        }
+
+        // If the node doesn't match, check its children
+        if (node.children && node.children.length > 0) {
+            const filteredChildren = node.children
+                .map(child => filterMindMapData(child, searchTerm, maxDepth))
+                .filter(c => c !== null);
+
+            if (filteredChildren.length > 0) {
+                // If any children (or their descendants) match, return a new node with just the matching branches
+                const newNode = { ...node };
+                newNode.children = filteredChildren;
+                return newNode;
+            }
+        }
+
+        return null; // No match in this branch
     }
 
     function renderGraph(data, searchTerm = "") {
