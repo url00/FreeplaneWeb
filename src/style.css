@@ -13,17 +13,6 @@ body {
     min-height: 100vh;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1em 0;
-    text-align: center;
-}
-
-header h1 {
-    margin: 0;
-}
-
 main {
     flex-grow: 1;
     display: flex;
@@ -95,22 +84,8 @@ main {
     padding: 0; /* Reset padding for d3 container */
 }
 
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 1em 0;
-    width: 100%;
-}
-
 /* Fixed layout for mobile */
 @media (max-width: 767px) {
-    html, body {
-        overflow: hidden; /* Prevent main page scroll on mobile */
-    }
-    main {
-        overflow: hidden; /* Prevent main from having its own scrollbar on mobile */
-    }
     .controls {
         height: 33.33vh;
         overflow-y: auto; /* Allow controls to scroll internally on mobile */
