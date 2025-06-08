@@ -25,7 +25,7 @@ main {
     background-color: #fff;
     padding: 1em;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    /* box-shadow removed */
     box-sizing: border-box;
     position: fixed;
     top: 1em;
@@ -47,7 +47,7 @@ main {
     background-color: #fff;
     padding: 1em;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    /* box-shadow removed */
     margin-bottom: 1em;
     box-sizing: border-box;
 }
