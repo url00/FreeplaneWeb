@@ -14,7 +14,13 @@
         <div class="controls">
             <label for="fileInput">Load Mind Map (XML):</label>
             <input type="file" id="fileInput" accept=".xml, .mm">
-            <br>
+            <fieldset class="display-mode">
+                <legend>Display</legend>
+                <input type="radio" id="displayGraph" name="displayMode" value="graph" checked>
+                <label for="displayGraph">Graph</label>
+                <input type="radio" id="displayList" name="displayMode" value="list">
+                <label for="displayList">List</label>
+            </fieldset>
             <label for="searchInput">Search Nodes:</label>
             <input type="text" id="searchInput" placeholder="Enter search term...">
             <br>
@@ -23,10 +29,6 @@
             <br>
             <label for="maxDepthInput">Max Depth:</label>
             <input type="number" id="maxDepthInput" value="2" min="0">
-        </div>
-        <div class="display-tabs">
-            <button id="graphTab" class="active">Graph</button>
-            <button id="listTab">List</button>
         </div>
         <div id="graphContainer" class="display-panel">
             <!-- d3.js graph will be rendered here -->

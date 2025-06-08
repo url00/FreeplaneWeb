@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const listContainerElement = document.getElementById('listContainer');
     const nodeLimitInputElement = document.getElementById('nodeLimitInput');
     const maxDepthInputElement = document.getElementById('maxDepthInput');
-    const graphTab = document.getElementById('graphTab');
-    const listTab = document.getElementById('listTab');
+    const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
 
     let currentMindMapData = null;
     let currentDisplayMode = 'graph';
@@ -90,8 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    graphTab.addEventListener('click', () => switchTab('graph'));
-    listTab.addEventListener('click', () => switchTab('list'));
+    displayModeRadios.forEach(radio => {
+        radio.addEventListener('change', (event) => {
+            switchTab(event.target.value);
+        });
+    });
 
     window.addEventListener('resize', debouncedHandleResize);
 
@@ -188,13 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function switchTab(mode) {
         currentDisplayMode = mode;
         if (mode === 'graph') {
-            graphTab.classList.add('active');
-            listTab.classList.remove('active');
             graphContainerElement.style.display = 'block';
             listContainerElement.style.display = 'none';
         } else {
-            listTab.classList.add('active');
-            graphTab.classList.remove('active');
             listContainerElement.style.display = 'block';
             graphContainerElement.style.display = 'none';
         }

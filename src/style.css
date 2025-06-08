@@ -42,7 +42,8 @@ main {
 }
 
 .controls input[type="file"],
-.controls input[type="text"] {
+.controls input[type="text"],
+.controls input[type="number"] {
     width: calc(100% - 22px); /* Account for padding and border */
     padding: 10px;
     margin-bottom: 1em;
@@ -51,23 +52,26 @@ main {
     box-sizing: border-box;
 }
 
-.display-tabs {
+.display-mode {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
     margin-bottom: 1em;
 }
 
-.display-tabs button {
-    padding: 10px 15px;
-    border: 1px solid #ccc;
-    background-color: #f0f0f0;
-    cursor: pointer;
-    border-bottom: none;
-    border-radius: 5px 5px 0 0;
+.display-mode legend {
+    font-weight: bold;
+    padding: 0 5px;
 }
 
-.display-tabs button.active {
-    background-color: #fff;
-    border-bottom: 1px solid #fff;
-    font-weight: bold;
+.display-mode input[type="radio"] {
+    margin-right: 5px;
+}
+
+.display-mode label {
+    margin-right: 15px;
+    font-weight: normal;
+    display: inline-block;
 }
 
 .display-panel {
