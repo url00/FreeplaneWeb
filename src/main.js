@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInputElement = document.getElementById('fileInput');
     const searchInputElement = document.getElementById('searchInput');
     const graphContainerElement = document.getElementById('graphContainer');
+    const nodeLimitInputElement = document.getElementById('nodeLimitInput');
 
     let currentMindMapData = null;
 
@@ -65,6 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
         searchInputElement.addEventListener('input', (event) => {
             const searchTerm = event.target.value;
             debouncedExecuteSearch(searchTerm);
+        });
+    }
+    if (nodeLimitInputElement) {
+        nodeLimitInputElement.addEventListener('change', () => {
+            const searchTerm = searchInputElement ? searchInputElement.value : "";
+            executeSearch(searchTerm);
         });
     }
     window.addEventListener('resize', debouncedHandleResize);
@@ -168,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const rootForCount = d3.hierarchy(data);
         const numNodes = rootForCount.descendants().length;
-        const nodeLimit = 20;
+        const nodeLimit = nodeLimitInputElement ? parseInt(nodeLimitInputElement.value, 10) : 20;
 
         if (numNodes > nodeLimit) {
             graphContainerElement.innerHTML = `<p style="text-align:center; padding:20px;">Mind map is too large to display (${numNodes} nodes).<br>Please use search to filter the content.</p>`;
