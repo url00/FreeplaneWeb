@@ -1,9 +1,13 @@
-body {
+html, body {
+    height: 100%;
     font-family: sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
     color: #333;
+}
+
+body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -22,17 +26,18 @@ header h1 {
 
 main {
     flex-grow: 1;
-    padding: 1em;
     display: flex;
     flex-direction: column;
+    padding: 1em;
 }
 
 .controls {
     background-color: #fff;
     padding: 1em;
-    margin-bottom: 1em;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 1em;
+    box-sizing: border-box;
 }
 
 .controls label {
@@ -76,12 +81,13 @@ main {
 
 .display-panel {
     flex-grow: 1;
-    min-height: 400px; /* Minimum height for the content */
+    min-height: 400px;
     border: 1px solid #ccc;
     background-color: #fff;
     overflow: auto; /* Use auto for list, d3 will manage graph */
     position: relative;
     padding: 10px;
+    box-sizing: border-box;
 }
 
 #graphContainer {
@@ -97,7 +103,24 @@ footer {
     width: 100%;
 }
 
-/* Basic responsive adjustments */
+/* Fixed layout for mobile */
+@media (max-width: 767px) {
+    html, body {
+        overflow: hidden; /* Prevent main page scroll on mobile */
+    }
+    main {
+        overflow: hidden; /* Prevent main from having its own scrollbar on mobile */
+    }
+    .controls {
+        height: 33.33vh;
+        overflow-y: auto; /* Allow controls to scroll internally on mobile */
+    }
+    .display-panel {
+        height: 66.67vh;
+    }
+}
+
+/* Basic responsive adjustments for desktop */
 @media (min-width: 768px) {
     main {
         flex-direction: row;
