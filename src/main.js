@@ -5,10 +5,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInputElement = document.getElementById('fileInput');
     const searchInputElement = document.getElementById('searchInput');
     const graphContainerElement = document.getElementById('graphContainer');
+    const listContainerElement = document.getElementById('listContainer');
     const nodeLimitInputElement = document.getElementById('nodeLimitInput');
     const maxDepthInputElement = document.getElementById('maxDepthInput');
+    const graphTab = document.getElementById('graphTab');
+    const listTab = document.getElementById('listTab');
 
     let currentMindMapData = null;
+    let currentDisplayMode = 'graph';
 
     if (!fileInputElement) {
         console.error("File input element not found!");
@@ -37,16 +41,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         console.log("Executing search for:", searchTerm); // Log when debounced function runs
 
-        if (searchTerm.trim() === "") {
-            renderGraph(currentMindMapData, ""); // Render full graph if search is empty
-        } else {
-            const maxDepth = maxDepthInputElement ? parseInt(maxDepthInputElement.value, 10) : 2;
-            const filteredData = filterMindMapData(currentMindMapData, searchTerm.toLowerCase(), maxDepth);
-            if (filteredData) {
-                renderGraph(filteredData, searchTerm.toLowerCase());
+        const dataToRender = searchTerm.trim() === ""
+            ? currentMindMapData
+            : filterMindMapData(currentMindMapData, searchTerm.toLowerCase(), maxDepthInputElement ? parseInt(maxDepthInputElement.value, 10) : 2);
+
+        if (dataToRender) {
+            if (currentDisplayMode === 'graph') {
+                renderGraph(dataToRender, searchTerm.toLowerCase());
             } else {
-                graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No matching nodes found.</p>';
+                renderList(dataToRender);
             }
+        } else {
+            graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No matching nodes found.</p>';
+            listContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No matching nodes found.</p>';
         }
     }
 
@@ -82,6 +89,10 @@ document.addEventListener('DOMContentLoaded', () => {
             executeSearch(searchTerm);
         });
     }
+    
+    graphTab.addEventListener('click', () => switchTab('graph'));
+    listTab.addEventListener('click', () => switchTab('list'));
+
     window.addEventListener('resize', debouncedHandleResize);
 
     // 5. Other function definitions
@@ -172,6 +183,51 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return null; // No match in this branch
+    }
+
+    function switchTab(mode) {
+        currentDisplayMode = mode;
+        if (mode === 'graph') {
+            graphTab.classList.add('active');
+            listTab.classList.remove('active');
+            graphContainerElement.style.display = 'block';
+            listContainerElement.style.display = 'none';
+        } else {
+            listTab.classList.add('active');
+            graphTab.classList.remove('active');
+            listContainerElement.style.display = 'block';
+            graphContainerElement.style.display = 'none';
+        }
+        const searchTerm = searchInputElement ? searchInputElement.value : "";
+        executeSearch(searchTerm);
+    }
+
+    function renderList(data) {
+        listContainerElement.innerHTML = ''; // Clear previous list
+        if (!data) {
+            listContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No data to display.</p>';
+            return;
+        }
+        const ul = document.createElement('ul');
+        ul.style.listStyleType = 'disc';
+        ul.style.paddingLeft = '20px';
+        buildList(data, ul);
+        listContainerElement.appendChild(ul);
+    }
+
+    function buildList(node, parentElement) {
+        if (!node) return;
+        const li = document.createElement('li');
+        li.textContent = node.name;
+        parentElement.appendChild(li);
+
+        if (node.children && node.children.length > 0) {
+            const ul = document.createElement('ul');
+            ul.style.listStyleType = 'circle';
+            ul.style.paddingLeft = '20px';
+            li.appendChild(ul);
+            node.children.forEach(child => buildList(child, ul));
+        }
     }
 
     function renderGraph(data, searchTerm = "") {

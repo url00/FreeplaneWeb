@@ -51,13 +51,38 @@ main {
     box-sizing: border-box;
 }
 
-#graphContainer {
+.display-tabs {
+    margin-bottom: 1em;
+}
+
+.display-tabs button {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+}
+
+.display-tabs button.active {
+    background-color: #fff;
+    border-bottom: 1px solid #fff;
+    font-weight: bold;
+}
+
+.display-panel {
     flex-grow: 1;
-    min-height: 400px; /* Minimum height for the graph */
+    min-height: 400px; /* Minimum height for the content */
     border: 1px solid #ccc;
     background-color: #fff;
+    overflow: auto; /* Use auto for list, d3 will manage graph */
+    position: relative;
+    padding: 10px;
+}
+
+#graphContainer {
     overflow: hidden; /* d3 will handle overflow with zoom/pan */
-    position: relative; /* For potential absolute positioning of d3 elements */
+    padding: 0; /* Reset padding for d3 container */
 }
 
 footer {
