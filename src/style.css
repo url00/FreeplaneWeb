@@ -16,8 +16,9 @@ body {
 main {
     flex-grow: 1;
     display: flex;
-    flex-direction: column;
+    flex-direction: column; /* Default to column for mobile */
     padding: 1em;
+    /* padding adjusted in media queries */
 }
 
 .search-container {
@@ -25,8 +26,13 @@ main {
     padding: 1em;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    margin-bottom: 1em;
     box-sizing: border-box;
+    position: fixed;
+    top: 1em;
+    left: 1em; /* Changed from right to left */
+    width: calc(100% - 2em); /* Full width minus padding on small screens */
+    max-width: 400px; /* Max width for desktop */
+    z-index: 1000;
 }
 
 .search-container input[type="text"] {
@@ -102,9 +108,14 @@ main {
 
 /* Fixed layout for mobile */
 @media (max-width: 767px) {
+    main {
+        padding-top: 5em; /* Adjust based on search-container height for mobile */
+    }
     .controls {
         height: 33.33vh;
         overflow-y: auto; /* Allow controls to scroll internally on mobile */
+        padding-top: 5em; /* Add padding to controls for floating search box on mobile */
+        flex-direction: column; /* Ensure controls stack vertically on mobile */
     }
     .display-panel {
         height: 66.67vh;
@@ -115,12 +126,16 @@ main {
 @media (min-width: 768px) {
     main {
         flex-direction: row;
+        padding-top: 1em; /* Reset top padding for desktop */
+        padding-left: 1em; /* Reset left padding for desktop */
     }
     .controls {
         flex: 1 1 30%;
         min-width: calc(100% / 3);
         margin-right: 1em;
         margin-bottom: 0;
+        padding-top: 5em; /* Add padding to controls for floating search box on desktop */
+        flex-direction: column; /* Ensure controls stack vertically on desktop */
     }
     .display-panel {
         flex: 2 1 70%;
