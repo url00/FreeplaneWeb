@@ -165,6 +165,15 @@ document.addEventListener('DOMContentLoaded', () => {
             graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No data to display.</p>';
             return;
         }
+
+        const rootForCount = d3.hierarchy(data);
+        const numNodes = rootForCount.descendants().length;
+        const nodeLimit = 20;
+
+        if (numNodes > nodeLimit) {
+            graphContainerElement.innerHTML = `<p style="text-align:center; padding:20px;">Mind map is too large to display (${numNodes} nodes).<br>Please use search to filter the content.</p>`;
+            return;
+        }
         
         const width = graphContainerElement.clientWidth;
         const height = graphContainerElement.clientHeight || 400; // Fallback height
