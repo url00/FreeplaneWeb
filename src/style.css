@@ -113,7 +113,6 @@ main {
     .controls {
         height: 33.33vh;
         overflow-y: auto;
-        padding-top: 5em;
         flex-direction: column;
     }
     .display-panel {
