@@ -136,6 +136,6 @@ main {
         flex-direction: column;
     }
     .display-panel {
-        flex: 2 1 70%;
+        flex: 2 1 calc(70% - 1em); /* Adjusted to account for controls' margin-right */
     }
 }
