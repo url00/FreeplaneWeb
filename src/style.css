@@ -10,7 +10,7 @@ html, body {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100dvh;
+    min-height: 100vh;
 }
 
 main {
@@ -111,12 +111,12 @@ main {
         padding-top: 5em;
     }
     .controls {
-        height: 33.33dvh;
+        height: 33.33vh;
         overflow-y: auto;
         flex-direction: column;
     }
     .display-panel {
-        height: 66.67dvh;
+        height: 66.67vh;
     }
 }
 
