@@ -111,12 +111,12 @@ main {
         padding-top: 5em;
     }
     .controls {
-        height: 32vh;
+        height: calc((100vh - 7em) * 0.33);
         overflow-y: auto;
         flex-direction: column;
     }
     .display-panel {
-        height: 66vh;
+        height: calc((100vh - 7em) * 0.67);
     }
 }
 
