@@ -63,7 +63,10 @@ main {
     margin-right: 5px;
 }
 
-.controls input[type="file"],
+.controls input[type="file"] {
+    display: none;
+}
+
 .controls input[type="number"] {
     width: 70%;
     padding: 5px;
@@ -71,6 +74,20 @@ main {
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 10px;
+}
+
+.controls label[for="fileInput"] {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 10px;
+    display: inline-block;
+}
+
+.controls label[for="fileInput"]:hover {
+    background-color: #e0e0e0;
 }
 
 .display-mode {
@@ -128,8 +145,8 @@ main {
         box-sizing: border-box;
     }
     .controls {
-        flex: 1 1 30%;
-        min-width: calc(100% / 3);
+        flex: 1 1 15%;
+        min-width: 15%;
         margin-right: 0.5em;
         margin-bottom: 0;
         padding-top: 3.5em;
@@ -137,6 +154,6 @@ main {
         overflow-y: auto;
     }
     .display-panel {
-        flex: 2 1 calc(70% - 0.5em); /* Adjusted to account for controls' margin-right */
+        flex: 2 1 calc(85% - 0.5em); /* Adjusted to account for controls' margin-right */
     }
 }
