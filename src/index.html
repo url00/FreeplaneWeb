@@ -15,18 +15,22 @@
         </div>
     <main>
         <div class="controls">
-            <label for="fileInput">Load Mind Map (XML):</label>
-            <input type="file" id="fileInput" accept=".xml, .mm">
+            <div class="control-group">
+                <label for="fileInput">Load Mind Map (XML):</label>
+                <input type="file" id="fileInput" accept=".xml, .mm">
+            </div>
             <div class="display-mode">
                 <button id="showGraphBtn">Show Graph</button>
                 <button id="showListBtn">Show List</button>
             </div>
-            <br>
-            <label for="nodeLimitInput">Max Nodes:</label>
-            <input type="number" id="nodeLimitInput" value="20" min="1">
-            <br>
-            <label for="maxDepthInput">Max Depth:</label>
-            <input type="number" id="maxDepthInput" value="2" min="0">
+            <div class="control-group">
+                <label for="nodeLimitInput">Max Nodes:</label>
+                <input type="number" id="nodeLimitInput" value="20" min="1">
+            </div>
+            <div class="control-group">
+                <label for="maxDepthInput">Max Depth:</label>
+                <input type="number" id="maxDepthInput" value="2" min="0">
+            </div>
         </div>
         <div id="graphContainer" class="display-panel">
         </div>
