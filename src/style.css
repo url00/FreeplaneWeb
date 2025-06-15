@@ -17,18 +17,18 @@ main {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding: 1em;
+    padding: 0.5em;
 }
 
 .search-container {
     background-color: #fff;
-    padding: 1em;
+    padding: 0.5em;
     border-radius: 5px;
     box-sizing: border-box;
     position: fixed;
-    top: 1em;
-    left: 1em;
-    width: calc(100% - 2em);
+    top: 0.5em;
+    left: 0.5em;
+    width: calc(100% - 1em);
     max-width: 400px;
     z-index: 1000;
 }
@@ -44,10 +44,10 @@ main {
 
 .controls {
     background-color: #fff;
-    padding: 1em;
+    padding: 0.5em;
     border-radius: 5px;
     /* box-shadow removed */
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
     box-sizing: border-box;
 }
 
@@ -71,8 +71,8 @@ main {
 .display-mode {
     border: 1px solid #ddd;
     border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 1em;
+    padding: 5px;
+    margin-bottom: 0.5em;
 }
 
 .display-mode legend {
@@ -97,7 +97,7 @@ main {
     background-color: #fff;
     overflow: auto;
     position: relative;
-    padding: 10px;
+    padding: 5px;
     box-sizing: border-box;
 }
 
@@ -108,35 +108,35 @@ main {
 
 @media (max-width: 767px) {
     main {
-        padding-top: 5em;
+        padding-top: 3.5em;
     }
     .controls {
-        height: calc((100vh - 7em) * 0.33);
+        height: calc((100vh - 4.5em) * 0.33);
         overflow-y: auto;
         flex-direction: column;
     }
     .display-panel {
-        height: calc((100vh - 7em) * 0.67);
+        height: calc((100vh - 4.5em) * 0.67);
     }
 }
 
 @media (min-width: 768px) {
     main {
         flex-direction: row;
-        padding: 1em;
-        height: calc(100vh - 2em);
+        padding: 0.5em;
+        height: calc(100vh - 1em);
         box-sizing: border-box;
     }
     .controls {
         flex: 1 1 30%;
         min-width: calc(100% / 3);
-        margin-right: 1em;
+        margin-right: 0.5em;
         margin-bottom: 0;
-        padding-top: 5em;
+        padding-top: 3.5em;
         flex-direction: column;
         overflow-y: auto;
     }
     .display-panel {
-        flex: 2 1 calc(70% - 1em); /* Adjusted to account for controls' margin-right */
+        flex: 2 1 calc(70% - 0.5em); /* Adjusted to account for controls' margin-right */
     }
 }
