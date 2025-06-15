@@ -8,7 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const listContainerElement = document.getElementById('listContainer');
     const nodeLimitInputElement = document.getElementById('nodeLimitInput');
     const maxDepthInputElement = document.getElementById('maxDepthInput');
-    const displayModeRadios = document.querySelectorAll('input[name="displayMode"]');
+    const showGraphBtn = document.getElementById('showGraphBtn');
+    const showListBtn = document.getElementById('showListBtn');
 
     let currentMindMapData = null;
     let currentDisplayMode = 'graph';
@@ -89,11 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    displayModeRadios.forEach(radio => {
-        radio.addEventListener('change', (event) => {
-            switchTab(event.target.value);
-        });
-    });
+    showGraphBtn.addEventListener('click', () => switchTab('graph'));
+    showListBtn.addEventListener('click', () => switchTab('list'));
 
     window.addEventListener('resize', debouncedHandleResize);
 

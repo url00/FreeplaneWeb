@@ -52,42 +52,42 @@ main {
 }
 
 .controls label {
-    display: block;
+    display: inline-block;
     margin-bottom: 0.5em;
-    font-weight: bold;
+    font-weight: normal;
+    font-size: 10px;
+    vertical-align: middle;
+    margin-right: 5px;
 }
 
 .controls input[type="file"],
 .controls input[type="number"] {
-    width: calc(100% - 22px);
-    padding: 10px;
+    width: 70%;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 5px;
     margin-bottom: 1em;
     border: 1px solid #ddd;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 16px; /* Prevent iOS auto-zoom */
+    font-size: 10px;
 }
 
 .display-mode {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px;
     margin-bottom: 0.5em;
 }
 
-.display-mode legend {
-    font-weight: bold;
-    padding: 0 5px;
+.display-mode button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    font-size: 10px;
 }
 
-.display-mode input[type="radio"] {
-    margin-right: 5px;
-}
-
-.display-mode label {
-    margin-right: 15px;
-    font-weight: normal;
-    display: inline-block;
+.display-mode button:hover {
+    background-color: #e0e0e0;
 }
 
 .display-panel {
