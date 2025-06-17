@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!currentMindMapData) {
             return;
         }
-        console.log("Executing search for:", searchTerm); // Log when debounced function runs
 
         const dataToRender = searchTerm.trim() === ""
             ? currentMindMapData
@@ -109,8 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 currentMindMapData = parseMindMapXml(xmlString);
                 if (currentMindMapData) {
-                    console.log("Mind map parsed successfully:", currentMindMapData);
-                    // Placeholder for Phase 2: renderGraph(currentMindMapData);
                     renderGraph(currentMindMapData); // Call initial render
                 } else {
                     console.error("Failed to parse mind map XML.");
@@ -227,115 +224,101 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderGraph(data, searchTerm = "") {
-        // Clear previous graph
         graphContainerElement.innerHTML = '';
-
         if (!data) {
             graphContainerElement.innerHTML = '<p style="text-align:center; padding:20px;">No data to display.</p>';
             return;
         }
 
-        const rootForCount = d3.hierarchy(data);
-        const numNodes = rootForCount.descendants().length;
-        const nodeLimit = nodeLimitInputElement ? parseInt(nodeLimitInputElement.value, 10) : 20;
+        const root = d3.hierarchy(data);
+        const nodes = root.descendants();
+        const links = root.links();
+        const numNodes = nodes.length;
+        const nodeLimit = nodeLimitInputElement ? parseInt(nodeLimitInputElement.value, 10) : 50;
 
         if (numNodes > nodeLimit) {
-            graphContainerElement.innerHTML = `<p style="text-align:center; padding:20px;">Mind map is too large to display (${numNodes} nodes).<br>Please use search to filter the content.</p>`;
+            graphContainerElement.innerHTML = `<p style="text-align:center; padding:20px;">Mind map is too large to display (${numNodes} nodes).<br>Please use search to filter the content or increase the node limit.</p>`;
             return;
         }
-        
+
         const width = graphContainerElement.clientWidth;
-        const height = graphContainerElement.clientHeight || 400; // Fallback height
+        const height = graphContainerElement.clientHeight || 600;
 
         const svg = d3.select(graphContainerElement)
             .append("svg")
             .attr("width", width)
             .attr("height", height)
-            .call(d3.zoom().on("zoom", (event) => {
-                g.attr("transform", event.transform);
-            }))
-            .append("g");
+            .attr("viewBox", [-width / 2, -height / 2, width, height]);
 
         const g = svg.append("g");
 
-        const nodeWidth = 180; // Horizontal space for each node
-        const nodeHeight = 70;  // Vertical space for each node, to accommodate wrapped text
-        const textMaxWidth = 150; // Max width for text before wrapping
-        const lineHeight = "1.1em"; // Line height for wrapped text
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100).strength(0.5))
+            .force("charge", d3.forceManyBody().strength(-400))
+            .force("center", d3.forceCenter())
+            .force("collide", d3.forceCollide().radius(d => d.radius || 30));
 
-        const root = d3.hierarchy(data);
-        // Use nodeSize for fixed spacing, better for text wrapping
-        const treeLayout = d3.tree().nodeSize([nodeHeight, nodeWidth]);
-        treeLayout(root);
+        const link = g.append("g")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+            .selectAll("line")
+            .data(links)
+            .join("line")
+            .attr("stroke-width", d => Math.sqrt(d.target.value));
 
-        // Links
-        g.selectAll('.link')
-            .data(root.links())
-            .enter()
-            .append('path')
-            .attr('class', 'link')
-            .attr('d', d3.linkHorizontal()
-                .x(d => d.y)
-                .y(d => d.x))
-            .style('fill', 'none')
-            .style('stroke', '#ccc')
-            .style('stroke-width', '1.5px');
+        const node = g.append("g")
+            .selectAll("g")
+            .data(nodes)
+            .join("g");
 
-        // Nodes
-        const node = g.selectAll('.node')
-            .data(root.descendants())
-            .enter()
-            .append('g')
-            .attr('class', d => `node ${d.children ? "node--internal" : "node--leaf"}`)
-            .attr('transform', d => `translate(${d.y},${d.x})`);
-
-        node.append('circle')
-            .attr('r', 5)
-            .style('fill', d => {
+        node.append("circle")
+            .attr("r", 10)
+            .attr("fill", d => {
                 if (searchTerm && d.data.name.toLowerCase().includes(searchTerm.toLowerCase())) {
-                    return 'orange'; // Highlight matching nodes
+                    return 'orange';
                 }
                 return d.children ? '#555' : '#999';
             });
 
-        node.append('text')
-            .attr('dy', '.35em')
-            .attr('x', d => d.children ? -13 : 13)
-            .style('text-anchor', d => d.children ? 'end' : 'start')
+        const textMaxWidth = 150;
+        const lineHeight = "1.2em";
+
+        node.append("text")
+            .attr("x", 15)
+            .attr("y", "0.35em")
+            .attr("stroke", "none")
+            .attr("stroke-width", 0)
+            .style("font-size", "12px")
+            .style("fill", "black")
+            .style("text-anchor", "start")
             .text(d => d.data.name)
-            .style('font-size', '10px')
-            .call(wrapText, textMaxWidth, lineHeight); // Call text wrapping function
+            .call(wrapText, textMaxWidth, lineHeight);
 
-        // Initial transform to center the graph or fit it
-        // Adjust translation based on new nodeWidth and potential graph spread
-        const firstNode = root.descendants()[0];
-        if(firstNode) {
-             // Translate to bring the first node near the left edge, vertically centered.
-             // The x-coordinate from d3.tree with nodeSize is relative to its parent in that dimension.
-             // The root node's x is typically 0 if nodeSize is used for vertical separation.
-             // We need to find the graph bounds to center it properly or fit it.
-             // For now, a simple initial translation:
-             let minX = 0, maxX = 0, minY = 0, maxY = 0;
-             root.each(d => {
-                if (d.x < minX) minX = d.x;
-                if (d.x > maxX) maxX = d.x;
-                if (d.y < minY) minY = d.y;
-                if (d.y > maxY) maxY = d.y;
-             });
-            
-             const graphHeight = maxX - minX + nodeHeight; // Approximate graph height
-             const graphWidth = maxY - minY + nodeWidth; // Approximate graph width
+        // Set collision radius after text is wrapped and sized
+        node.each(function(d) {
+            const bbox = this.getBBox();
+            d.radius = Math.max(bbox.width, bbox.height) / 2 + 10; // Add padding
+        });
+        
+        // Restart simulation with updated radius
+        simulation.force("collide", d3.forceCollide().radius(d => d.radius).strength(1));
+        simulation.alpha(1).restart();
 
-             let initialScale = Math.min( (height - 40) / graphHeight, (width - 40) / graphWidth, 1); // Add padding
-             if (initialScale > 1) initialScale = 1; // Don't scale up beyond 1
 
-             // Center the graph
-             const translateX = (width - graphWidth * initialScale) / 2 - (minY * initialScale) + 20; // +20 for some left padding
-             const translateY = (height - graphHeight * initialScale) / 2 - (minX * initialScale) + 20; // +20 for some top padding
-            
-             const initialTransform = d3.zoomIdentity.translate(translateX, translateY).scale(initialScale);
-             d3.select(graphContainerElement).select('svg').call(d3.zoom().transform, initialTransform);
-        }
+        simulation.on("tick", () => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            node
+                .attr("transform", d => `translate(${d.x},${d.y})`);
+        });
+        
+        svg.call(d3.zoom().on("zoom", (event) => {
+            g.attr("transform", event.transform);
+        }));
     }
 
     /**
@@ -345,38 +328,31 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {string|number} lineHeight The height of each line (e.g., "1.1em" or a pixel value).
      */
     function wrapText(textSelection, maxWidth, lineHeight) {
-        textSelection.each(function(d) { // 'd' is the data bound to the node
+        textSelection.each(function(d) {
             const text = d3.select(this);
-            const words = d.data.name.split(/\s+/).reverse(); // Process words in reverse for easy pop
+            const words = d.data.name.split(/\s+/).reverse();
             let word;
             let line = [];
             let lineNumber = 0;
-            const x = text.attr("x"); // Original x position
-            const initialDy = parseFloat(text.attr("dy")) || 0; // Original dy (e.g., 0.35em)
-            
-            text.text(null); // Clear existing text
+            const x = text.attr("x");
+            const y = text.attr("y");
+            const dy = parseFloat(text.attr("dy")) || 0;
 
-            let tspan = text.append("tspan")
-                .attr("x", x)
-                .attr("dy", initialDy + "em"); // Use 'em' if initialDy was like '0.35em'
+            text.text(null); // Clear existing text to prepare for tspans
+
+            let tspan = text.append("tspan").attr("x", x).attr("y", y).attr("dy", dy + "em");
 
             while (word = words.pop()) {
                 line.push(word);
                 tspan.text(line.join(" "));
-                // Check if tspan exceeds maxWidth. For robust checking, use getComputedTextLength().
-                // However, getComputedTextLength can be slow if called for many nodes.
-                // A simpler heuristic or fixed char count per line might be used if performance is an issue.
-                // For now, let's assume a more direct check if possible, or rely on visual adjustment.
-                // This is a common challenge in SVG text wrapping.
-                // A common approach is to test length, if too long, remove last word, finalize tspan, start new tspan with that word.
                 if (tspan.node().getComputedTextLength() > maxWidth && line.length > 1) {
-                    line.pop(); // Remove the word that made it too long
+                    line.pop();
                     tspan.text(line.join(" "));
-                    line = [word]; // Start new line with the popped word
-                    lineNumber++;
+                    line = [word];
                     tspan = text.append("tspan")
                         .attr("x", x)
-                        .attr("dy", lineNumber === 0 && initialDy !== 0 ? initialDy + "em" : lineHeight) // Subsequent lines use lineHeight
+                        .attr("y", y)
+                        .attr("dy", ++lineNumber * parseFloat(lineHeight) + dy + "em")
                         .text(word);
                 }
             }
