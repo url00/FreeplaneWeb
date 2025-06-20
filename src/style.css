@@ -128,12 +128,10 @@ main {
         padding-top: 3.5em;
     }
     .controls {
-        height: calc((100vh - 4.5em) * 0.33);
-        overflow-y: auto;
-        flex-direction: column;
+        flex-shrink: 0;
     }
     .display-panel {
-        height: calc((100vh - 4.5em) * 0.67);
+        flex-grow: 1;
     }
 }
 
