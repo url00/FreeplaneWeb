@@ -1,5 +1,7 @@
 # FreeplaneWeb
 
+You can access the deployed application here: [https://url00.github.io/FreeplaneWeb/](https://url00.github.io/FreeplaneWeb/)
+
 A tool to view and search existing Freeplane mind map documents from a web browser with both desktop and mobile supported.
 
 ## Client-Side First
